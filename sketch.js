@@ -1,5 +1,7 @@
 // WiFi variables
-let SERVER_ADDRESS = "http://10.10.81.101/data";
+let SERVER_ADDRESS = "http://10.10.81.101";
+let PATH_GET = "/data";
+let PATH_POST = "/post";
 
 let readyForWiFiData;
 let sendSuccess;
@@ -57,7 +59,8 @@ function setup() {
   createMaze();
   createPlayer();
 
-  readyForWiFiData = false;
+  // WiFi setup
+  readyForWiFiData = true;
   sendSuccess = false;
 }
 
@@ -86,10 +89,11 @@ function draw() {
 
   // WiFi update
   if (sendSuccess) {
-    // TODO: make request for LED
     sendSuccess = false;
+    let data = { success: 1 };
+    httpPost(SERVER_ADDRESS + PATH_POST, data);
   } else if (readyForWiFiData) {
     readyForWiFiData = false;
-    loadJSON(SERVER_ADDRESS, handleResponse);
+    loadJSON(SERVER_ADDRESS + PATH_GET, handleResponse);
   }
 }

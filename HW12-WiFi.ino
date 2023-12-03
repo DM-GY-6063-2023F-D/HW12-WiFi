@@ -1,6 +1,5 @@
 #include <WebServer.h>
 #include <WiFi.h>
-#include "esp_wpa2.h"
 
 #include <ArduinoJson.h>
 
@@ -18,12 +17,9 @@ int deltA0Val = 0;
 
 int LEDPIN = 4;
 long turnLedOffTime = 0;
+int LED_DURATION = 1000;
 
-// WiFi function
-void handleNotFound() {
-  server.send(404, "text/plain", "404! ADDRESS NOT FOUND");
-}
-
+// WiFi functions
 void handleData() {
   StaticJsonDocument<128> resJson;
   JsonObject data = resJson.createNestedObject("data");
@@ -36,6 +32,34 @@ void handleData() {
   serializeJson(resJson, resTxt);
 
   server.send(200, "application/json", resTxt);
+}
+
+// WebServer "documentation":
+// https://github.com/espressif/arduino-esp32/blob/master/libraries/WebServer/src/WebServer.h
+void handlePost() {
+  StaticJsonDocument<128> postData;
+  String postJson(server.arg(0));
+
+  server.send(200, "text/plain", "POST");
+
+  deserializeJson(postData, postJson);
+
+  int mSuccess = postData["success"];
+
+  if (mSuccess) {
+    digitalWrite(LEDPIN, HIGH);
+    turnLedOffTime = millis() + LED_DURATION;
+  }
+}
+
+// Handle CORS pre-flight on POST requests, according to this:
+// https://stackoverflow.com/a/74116471
+void handleNotFound() {
+  if (server.method() == HTTP_OPTIONS) {
+    server.send(200);
+  } else {
+    server.send(404, "text/plain", "404! ADDRESS NOT FOUND");
+  }
 }
 
 void setup() {
@@ -66,7 +90,8 @@ void setup() {
   }
 
   server.enableCORS();
-  server.on("/data", handleData);
+  server.on("/data", HTTP_GET, handleData);
+  server.on("/post", HTTP_POST, handlePost);
   server.onNotFound(handleNotFound);
   server.begin();
 }
@@ -83,6 +108,12 @@ void loop() {
   }
 
   prevA0Val = currA0Val;
+
+  // check if LED has to be turned off
+  if (millis() > turnLedOffTime) {
+    digitalWrite(LEDPIN, LOW);
+    turnLedOffTime = millis() + 10 * LED_DURATION;
+  }
 
   // WiFi code
   server.handleClient();
