@@ -7,7 +7,7 @@ Maze game from week09 ([code](https://github.com/DM-GY-6063-2023F-D/week09/tree/
 The p5js sketch sends the following object as a JSON to the Arduino to indicate the successful completion of a level:
 
 ```
-{
+data: {
   success: 1
 }
 ```
