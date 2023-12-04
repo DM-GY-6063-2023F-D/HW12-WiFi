@@ -34,3 +34,10 @@ data: {
 ## Board
 
 ![](./imgs/HW12-WiFi_bb.jpg)
+
+## Actual Board
+
+![](./imgs/HW12-WiFi_00.jpg)
+![](./imgs/HW12-WiFi_01.jpg)
+
+## Video

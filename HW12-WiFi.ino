@@ -17,7 +17,7 @@ int deltA0Val = 0;
 
 int LEDPIN = 4;
 long turnLedOffTime = 0;
-int LED_DURATION = 1000;
+int LED_DURATION = 2000;
 
 // WiFi functions
 void handleData() {
