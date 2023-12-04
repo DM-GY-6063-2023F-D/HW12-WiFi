@@ -13,7 +13,7 @@ int POTPIN = A0;
 
 int currA0Val = 0;
 int prevA0Val = 0;
-int deltA0Val = 0;
+float avgA0Val = 0;
 
 int LEDPIN = 4;
 long turnLedOffTime = 0;
@@ -25,8 +25,9 @@ void handleData() {
   JsonObject data = resJson.createNestedObject("data");
   JsonObject jA0 = data.createNestedObject("A0");
 
-  jA0["value"] = currA0Val;
-  jA0["delta"] = deltA0Val;
+  jA0["raw"] = currA0Val;
+  jA0["previous"] = prevA0Val;
+  jA0["average"] = int(avgA0Val);
 
   String resTxt = "";
   serializeJson(resJson, resTxt);
@@ -97,17 +98,14 @@ void setup() {
 }
 
 void loop() {
-  // read input and calculate delta
+  // keep previous value
+  prevA0Val = currA0Val;
+
+  // read input
   currA0Val = analogRead(POTPIN);
 
-  deltA0Val = 0;
-  if (currA0Val - prevA0Val > 5) {
-    deltA0Val = 1;
-  } else if (currA0Val - prevA0Val < -5) {
-    deltA0Val = -1;
-  }
-
-  prevA0Val = currA0Val;
+  // compute low-pass average
+  avgA0Val = 0.99 * avgA0Val + 0.01 * currA0Val;
 
   // check if LED has to be turned off
   if (millis() > turnLedOffTime) {

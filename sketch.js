@@ -1,5 +1,5 @@
 // WiFi variables
-let SERVER_ADDRESS = "http://10.10.81.101";
+let SERVER_ADDRESS = "http://192.168.43.77";
 let PATH_GET = "/data";
 let PATH_POST = "/post";
 
@@ -19,12 +19,10 @@ function handleResponse(res) {
 
 function parseData(data) {
   // get values from data
-  let potDelta = data.A0.delta;
+  let avgPotVal = data.A0.average;
 
   // use data to update project variables
-  if (potDelta != 0) {
-    currentAngle += potDelta;
-  }
+  currentAngle = map(avgPotVal, 0, 4095, -180, 180);
 }
 
 // game function
@@ -41,7 +39,7 @@ function createMaze() {
 
   for (let y = 0; y < height; y += gridSize) {
     for (let x = 0; x < width; x += gridSize) {
-      if (random() < 0.3333) {
+      if (random() < 0.3333 && abs(sx - x) + abs(sy - y) > gridSize) {
         let sprite = new Sprite(sx, sy, gridSize, gridSize, "k");
         sprite.offset.x = x - width / 2;
         sprite.offset.y = y - height / 2;
@@ -69,11 +67,11 @@ function draw() {
 
   // update board rotation
   for (let i = 0; i < maze.length; i++) {
-    maze[i].rotateTo(currentAngle, 3);
+    maze[i].rotateTo(currentAngle, 50);
   }
 
   // if ball goes off the board
-  if (player.x > width || player.x < 0 || player.y > height || player.y < 0) {
+  if (player.y > height + gridSize) {
     for (let i = 0; i < maze.length; i++) {
       maze[i].remove();
     }

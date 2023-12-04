@@ -19,13 +19,16 @@ The object that is created by the Arduino and sent to p5js looks like this:
 ```
 data: {
   A0: {
-    value: integer,
-    delta:  [-1, 0, 1]
+    raw: integer,
+    previous: integer,
+    average: integer
   }
 }
 ```
 
-```A0.delta``` is used to update the rotation of the maze: a positive delta means rotate left by 1°, a negative delta means rotate right by 1°, and a zero means no rotation.
+```A0.average``` is used to update the rotation of the maze: the values from the ```A0``` pin are mapped from [0, 4095] to [-180, 180] to determine the angle of rotation of the board.
+
+```A0.raw``` and ```A0.previous``` are also sent in case a different averaging method is desired.
 
 ## Schematic
 
