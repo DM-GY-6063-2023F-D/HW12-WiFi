@@ -44,3 +44,5 @@ data: {
 ![](./imgs/HW12-WiFi_01.jpg)
 
 ## Video
+
+https://github.com/DM-GY-6063-2023F-D/HW12-WiFi/assets/850815/604e8fa5-3a14-4a9e-a8f3-fcd77c8119bd
